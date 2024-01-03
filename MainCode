@@ -1,0 +1,2666 @@
+using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
+
+namespace NestedTicTacToe_Midterm
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            GameLog.Items.Clear();
+            currentPlayer = 1;
+            GameLog.Items.Add("Player 1 (X)'s turn.");
+        }
+
+
+        //int variable representing which player's turn it is. 1 = X, 2 = O
+        int currentPlayer;
+
+        //int variable representing which minor topLeftBoard is currently active
+        int currentMinorBoard;
+
+        //2D array representing which player won a minor board
+        int[,] minorWins = new int[3, 3];
+
+        //boolean representing if a minor board has been won or not
+        bool topLeftWon = false;
+        bool topMiddleWon = false;
+        bool topRightWon = false;
+        bool middleLeftWon = false;
+        bool centerWon = false;
+        bool middleRightWon = false;
+        bool bottomLeftWon = false;
+        bool bottomMiddleWon = false;
+        bool bottomRightWon = false;
+
+        //2D arrays representing minor boards
+        int[,] topLeftBoard = new int[3, 3];
+        int[,] topMiddleBoard = new int[3, 3];
+        int[,] topRightBoard = new int[3, 3];
+        int[,] middleLeftBoard = new int[3, 3];
+        int[,] centerBoard = new int[3, 3];
+        int[,] middleRightBoard = new int[3, 3];
+        int[,] bottomLeftBoard = new int[3, 3];
+        int[,] bottomMiddleBoard = new int[3, 3];
+        int[,] bottomRightBoard = new int[3, 3];
+
+        public static bool AreMajorBoardSquaresEqual(Image imageA, Image imageB, Image imageC)
+        {
+            if (imageA == null || imageB == null || imageC == null)
+            {
+                return false;
+            }
+            if (imageA.Width != imageB.Width || imageA.Height != imageB.Height || imageA.Width != imageC.Width || imageA.Height != imageC.Height)
+            {
+                return false;
+            }
+
+            Bitmap bmpA = new Bitmap(imageA);
+            Bitmap bmpB = new Bitmap(imageB);
+            Bitmap bmpC = new Bitmap(imageC);
+
+            for (int x = 0; x < bmpA.Width; x++)
+            {
+                for (int y = 0; y < bmpA.Height; y++)
+                {
+                    if (bmpA.GetPixel(x, y) != bmpB.GetPixel(x, y) || bmpA.GetPixel(x, y) != bmpC.GetPixel(x, y))
+                    {
+                        return false;
+                    }
+
+                }
+            }
+
+            return true;
+        }
+
+        public void EndGame(Control container)
+        {
+            foreach (Control control in container.Controls)
+            {
+                control.Enabled = false;
+            }
+        }
+
+
+        #region CheckWins
+        public void CheckMinorWinTopLeft()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (topLeftBoard[i, 0] == currentPlayer && topLeftBoard[i, 1] == currentPlayer && topLeftBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button2.SendToBack();
+                    button3.SendToBack();
+                    button4.SendToBack();
+                    button5.SendToBack();
+                    button6.SendToBack();
+                    button7.SendToBack();
+                    button8.SendToBack();
+                    button9.SendToBack();
+                    button10.SendToBack();
+
+                    pb_TopLeft.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_TopLeft.Image = Image.FromFile(@"Images/X.png");
+                        topLeftWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_TopLeft.Image = Image.FromFile(@"Images/Circle.png");
+                        topLeftWon = true;
+                    }
+                }
+                if (topLeftBoard[0, i] == currentPlayer && topLeftBoard[1, i] == currentPlayer && topLeftBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button2.SendToBack();
+                    button3.SendToBack();
+                    button4.SendToBack();
+                    button5.SendToBack();
+                    button6.SendToBack();
+                    button7.SendToBack();
+                    button8.SendToBack();
+                    button9.SendToBack();
+                    button10.SendToBack();
+
+                    pb_TopLeft.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_TopLeft.Image = Image.FromFile(@"Images/X.png");
+                        topLeftWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_TopLeft.Image = Image.FromFile(@"Images/Circle.png");
+                        topLeftWon = true;
+                    }
+
+                }
+            }
+            if (topLeftBoard[0, 0] == currentPlayer && topLeftBoard[1, 1] == currentPlayer && topLeftBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button2.SendToBack();
+                button3.SendToBack();
+                button4.SendToBack();
+                button5.SendToBack();
+                button6.SendToBack();
+                button7.SendToBack();
+                button8.SendToBack();
+                button9.SendToBack();
+                button10.SendToBack();
+
+                pb_TopLeft.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_TopLeft.Image = Image.FromFile(@"Images/X.png");
+                    topLeftWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_TopLeft.Image = Image.FromFile(@"Images/Circle.png");
+                    topLeftWon = true;
+                }
+            }
+            if (topLeftBoard[0, 2] == currentPlayer && topLeftBoard[1, 1] == currentPlayer && topLeftBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button2.SendToBack();
+                button3.SendToBack();
+                button4.SendToBack();
+                button5.SendToBack();
+                button6.SendToBack();
+                button7.SendToBack();
+                button8.SendToBack();
+                button9.SendToBack();
+                button10.SendToBack();
+
+                pb_TopLeft.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_TopLeft.Image = Image.FromFile(@"Images/X.png");
+                    topLeftWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_TopLeft.Image = Image.FromFile(@"Images/Circle.png");
+                    topLeftWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinTopMiddle()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (topMiddleBoard[i, 0] == currentPlayer && topMiddleBoard[i, 1] == currentPlayer && topMiddleBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button11.SendToBack();
+                    button12.SendToBack();
+                    button13.SendToBack();
+                    button14.SendToBack();
+                    button15.SendToBack();
+                    button16.SendToBack();
+                    button17.SendToBack();
+                    button18.SendToBack();
+                    button19.SendToBack();
+
+                    pb_TopMiddle.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_TopMiddle.Image = Image.FromFile(@"Images/X.png");
+                        topMiddleWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_TopMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                        topMiddleWon = true;
+                    }
+                }
+                if (topMiddleBoard[0, i] == currentPlayer && topMiddleBoard[1, i] == currentPlayer && topMiddleBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button11.SendToBack();
+                    button12.SendToBack();
+                    button13.SendToBack();
+                    button14.SendToBack();
+                    button15.SendToBack();
+                    button16.SendToBack();
+                    button17.SendToBack();
+                    button18.SendToBack();
+                    button19.SendToBack();
+
+                    pb_TopMiddle.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_TopMiddle.Image = Image.FromFile(@"Images/X.png");
+                        topMiddleWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_TopMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                        topMiddleWon = true;
+                    }
+                }
+            }
+            if (topMiddleBoard[0, 0] == currentPlayer && topMiddleBoard[1, 1] == currentPlayer && topMiddleBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button11.SendToBack();
+                button12.SendToBack();
+                button13.SendToBack();
+                button14.SendToBack();
+                button15.SendToBack();
+                button16.SendToBack();
+                button17.SendToBack();
+                button18.SendToBack();
+                button19.SendToBack();
+
+                pb_TopMiddle.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_TopMiddle.Image = Image.FromFile(@"Images/X.png");
+                    topMiddleWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_TopMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                    topMiddleWon = true;
+                }
+            }
+            if (topMiddleBoard[0, 2] == currentPlayer && topMiddleBoard[1, 1] == currentPlayer && topMiddleBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button11.SendToBack();
+                button12.SendToBack();
+                button13.SendToBack();
+                button14.SendToBack();
+                button15.SendToBack();
+                button16.SendToBack();
+                button17.SendToBack();
+                button18.SendToBack();
+                button19.SendToBack();
+
+                pb_TopMiddle.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_TopMiddle.Image = Image.FromFile(@"Images/X.png");
+                    topMiddleWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_TopMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                    topMiddleWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinTopRight()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (topRightBoard[i, 0] == currentPlayer && topRightBoard[i, 1] == currentPlayer && topRightBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button20.SendToBack();
+                    button21.SendToBack();
+                    button22.SendToBack();
+                    button23.SendToBack();
+                    button24.SendToBack();
+                    button25.SendToBack();
+                    button26.SendToBack();
+                    button27.SendToBack();
+                    button28.SendToBack();
+
+                    pb_TopRight.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_TopRight.Image = Image.FromFile(@"Images/X.png");
+                        topRightWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_TopRight.Image = Image.FromFile(@"Images/Circle.png");
+                        topRightWon = true;
+                    }
+                }
+                if (topRightBoard[0, i] == currentPlayer && topRightBoard[1, i] == currentPlayer && topRightBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button20.SendToBack();
+                    button21.SendToBack();
+                    button22.SendToBack();
+                    button23.SendToBack();
+                    button24.SendToBack();
+                    button25.SendToBack();
+                    button26.SendToBack();
+                    button27.SendToBack();
+                    button28.SendToBack();
+
+                    pb_TopRight.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_TopRight.Image = Image.FromFile(@"Images/X.png");
+                        topRightWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_TopRight.Image = Image.FromFile(@"Images/Circle.png");
+                        topRightWon = true;
+                    }
+                }
+            }
+            if (topRightBoard[0, 0] == currentPlayer && topRightBoard[1, 1] == currentPlayer && topRightBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button20.SendToBack();
+                button21.SendToBack();
+                button22.SendToBack();
+                button23.SendToBack();
+                button24.SendToBack();
+                button25.SendToBack();
+                button26.SendToBack();
+                button27.SendToBack();
+                button28.SendToBack();
+
+                pb_TopRight.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_TopRight.Image = Image.FromFile(@"Images/X.png");
+                    topRightWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_TopRight.Image = Image.FromFile(@"Images/Circle.png");
+                    topRightWon = true;
+                }
+            }
+            if (topRightBoard[0, 2] == currentPlayer && topRightBoard[1, 1] == currentPlayer && topRightBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button20.SendToBack();
+                button21.SendToBack();
+                button22.SendToBack();
+                button23.SendToBack();
+                button24.SendToBack();
+                button25.SendToBack();
+                button26.SendToBack();
+                button27.SendToBack();
+                button28.SendToBack();
+
+                pb_TopRight.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_TopRight.Image = Image.FromFile(@"Images/X.png");
+                    topRightWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_TopRight.Image = Image.FromFile(@"Images/Circle.png");
+                    topRightWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinMiddleLeft()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (middleLeftBoard[i, 0] == currentPlayer && middleLeftBoard[i, 1] == currentPlayer && middleLeftBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button29.SendToBack();
+                    button30.SendToBack();
+                    button31.SendToBack();
+                    button32.SendToBack();
+                    button33.SendToBack();
+                    button34.SendToBack();
+                    button35.SendToBack();
+                    button36.SendToBack();
+                    button37.SendToBack();
+
+                    pb_MiddleLeft.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_MiddleLeft.Image = Image.FromFile(@"Images/X.png");
+                        middleLeftWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_MiddleLeft.Image = Image.FromFile(@"Images/Circle.png");
+                        middleLeftWon = true;
+                    }
+                }
+                if (middleLeftBoard[0, i] == currentPlayer && middleLeftBoard[1, i] == currentPlayer && middleLeftBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button29.SendToBack();
+                    button30.SendToBack();
+                    button31.SendToBack();
+                    button32.SendToBack();
+                    button33.SendToBack();
+                    button34.SendToBack();
+                    button35.SendToBack();
+                    button36.SendToBack();
+                    button37.SendToBack();
+
+                    pb_MiddleLeft.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_MiddleLeft.Image = Image.FromFile(@"Images/X.png");
+                        middleLeftWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_MiddleLeft.Image = Image.FromFile(@"Images/Circle.png");
+                        middleLeftWon = true;
+                    }
+                }
+            }
+            if (middleLeftBoard[0, 0] == currentPlayer && middleLeftBoard[1, 1] == currentPlayer && middleLeftBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button29.SendToBack();
+                button30.SendToBack();
+                button31.SendToBack();
+                button32.SendToBack();
+                button33.SendToBack();
+                button34.SendToBack();
+                button35.SendToBack();
+                button36.SendToBack();
+                button37.SendToBack();
+
+                pb_MiddleLeft.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_MiddleLeft.Image = Image.FromFile(@"Images/X.png");
+                    middleLeftWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_MiddleLeft.Image = Image.FromFile(@"Images/Circle.png");
+                    middleLeftWon = true;
+                }
+            }
+            if (middleLeftBoard[0, 2] == currentPlayer && middleLeftBoard[1, 1] == currentPlayer && middleLeftBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button29.SendToBack();
+                button30.SendToBack();
+                button31.SendToBack();
+                button32.SendToBack();
+                button33.SendToBack();
+                button34.SendToBack();
+                button35.SendToBack();
+                button36.SendToBack();
+                button37.SendToBack();
+
+                pb_MiddleLeft.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_MiddleLeft.Image = Image.FromFile(@"Images/X.png");
+                    middleLeftWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_MiddleLeft.Image = Image.FromFile(@"Images/Circle.png");
+                    middleLeftWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinCenter()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (centerBoard[i, 0] == currentPlayer && centerBoard[i, 1] == currentPlayer && centerBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button38.SendToBack();
+                    button39.SendToBack();
+                    button40.SendToBack();
+                    button41.SendToBack();
+                    button42.SendToBack();
+                    button43.SendToBack();
+                    button44.SendToBack();
+                    button45.SendToBack();
+                    button46.SendToBack();
+
+                    pb_Center.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_Center.Image = Image.FromFile(@"Images/X.png");
+                        centerWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_Center.Image = Image.FromFile(@"Images/Circle.png");
+                        centerWon = true;
+                    }
+                }
+                if (centerBoard[0, i] == currentPlayer && centerBoard[1, i] == currentPlayer && centerBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button38.SendToBack();
+                    button39.SendToBack();
+                    button40.SendToBack();
+                    button41.SendToBack();
+                    button42.SendToBack();
+                    button43.SendToBack();
+                    button44.SendToBack();
+                    button45.SendToBack();
+                    button46.SendToBack();
+
+                    pb_Center.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_Center.Image = Image.FromFile(@"Images/X.png");
+                        centerWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_Center.Image = Image.FromFile(@"Images/Circle.png");
+                        centerWon = true;
+                    }
+                }
+            }
+            if (centerBoard[0, 0] == currentPlayer && centerBoard[1, 1] == currentPlayer && centerBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button38.SendToBack();
+                button39.SendToBack();
+                button40.SendToBack();
+                button41.SendToBack();
+                button42.SendToBack();
+                button43.SendToBack();
+                button44.SendToBack();
+                button45.SendToBack();
+                button46.SendToBack();
+
+                pb_Center.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_Center.Image = Image.FromFile(@"Images/X.png");
+                    centerWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_Center.Image = Image.FromFile(@"Images/Circle.png");
+                    centerWon = true;
+                }
+            }
+            if (centerBoard[0, 2] == currentPlayer && centerBoard[1, 1] == currentPlayer && centerBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button38.SendToBack();
+                button39.SendToBack();
+                button40.SendToBack();
+                button41.SendToBack();
+                button42.SendToBack();
+                button43.SendToBack();
+                button44.SendToBack();
+                button45.SendToBack();
+                button46.SendToBack();
+
+                pb_Center.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_Center.Image = Image.FromFile(@"Images/X.png");
+                    centerWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_Center.Image = Image.FromFile(@"Images/Circle.png");
+                    centerWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinMiddleRight()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (middleRightBoard[i, 0] == currentPlayer && middleRightBoard[i, 1] == currentPlayer && middleRightBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button47.SendToBack();
+                    button48.SendToBack();
+                    button49.SendToBack();
+                    button50.SendToBack();
+                    button51.SendToBack();
+                    button52.SendToBack();
+                    button53.SendToBack();
+                    button54.SendToBack();
+                    button55.SendToBack();
+
+                    pb_MiddleRight.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_MiddleRight.Image = Image.FromFile(@"Images/X.png");
+                        middleRightWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_MiddleRight.Image = Image.FromFile(@"Images/Circle.png");
+                        middleRightWon = true;
+                    }
+                }
+                if (middleRightBoard[0, i] == currentPlayer && middleRightBoard[1, i] == currentPlayer && middleRightBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button47.SendToBack();
+                    button48.SendToBack();
+                    button49.SendToBack();
+                    button50.SendToBack();
+                    button51.SendToBack();
+                    button52.SendToBack();
+                    button53.SendToBack();
+                    button54.SendToBack();
+                    button55.SendToBack();
+
+                    pb_MiddleRight.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_MiddleRight.Image = Image.FromFile(@"Images/X.png");
+                        middleRightWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_MiddleRight.Image = Image.FromFile(@"Images/Circle.png");
+                        middleRightWon = true;
+                    }
+                }
+            }
+            if (middleRightBoard[0, 0] == currentPlayer && middleRightBoard[1, 1] == currentPlayer && middleRightBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button47.SendToBack();
+                button48.SendToBack();
+                button49.SendToBack();
+                button50.SendToBack();
+                button51.SendToBack();
+                button52.SendToBack();
+                button53.SendToBack();
+                button54.SendToBack();
+                button55.SendToBack();
+
+                pb_MiddleRight.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_MiddleRight.Image = Image.FromFile(@"Images/X.png");
+                    middleRightWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_MiddleRight.Image = Image.FromFile(@"Images/Circle.png");
+                    middleRightWon = true;
+                }
+            }
+            if (middleRightBoard[0, 2] == currentPlayer && middleRightBoard[1, 1] == currentPlayer && middleRightBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button47.SendToBack();
+                button48.SendToBack();
+                button49.SendToBack();
+                button50.SendToBack();
+                button51.SendToBack();
+                button52.SendToBack();
+                button53.SendToBack();
+                button54.SendToBack();
+                button55.SendToBack();
+
+                pb_MiddleRight.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_MiddleRight.Image = Image.FromFile(@"Images/X.png");
+                    middleRightWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_MiddleRight.Image = Image.FromFile(@"Images/Circle.png");
+                    middleRightWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinBottomLeft()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (bottomLeftBoard[i, 0] == currentPlayer && bottomLeftBoard[i, 1] == currentPlayer && bottomLeftBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button56.SendToBack();
+                    button57.SendToBack();
+                    button58.SendToBack();
+                    button59.SendToBack();
+                    button60.SendToBack();
+                    button61.SendToBack();
+                    button62.SendToBack();
+                    button63.SendToBack();
+                    button64.SendToBack();
+
+                    pb_BottomLeft.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_BottomLeft.Image = Image.FromFile(@"Images/X.png");
+                        bottomLeftWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_BottomLeft.Image = Image.FromFile(@"Images/Circle.png");
+                        bottomLeftWon = true;
+                    }
+                }
+                if (bottomLeftBoard[0, i] == currentPlayer && bottomLeftBoard[1, i] == currentPlayer && bottomLeftBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button56.SendToBack();
+                    button57.SendToBack();
+                    button58.SendToBack();
+                    button59.SendToBack();
+                    button60.SendToBack();
+                    button61.SendToBack();
+                    button62.SendToBack();
+                    button63.SendToBack();
+                    button64.SendToBack();
+
+                    pb_BottomLeft.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_BottomLeft.Image = Image.FromFile(@"Images/X.png");
+                        bottomLeftWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_BottomLeft.Image = Image.FromFile(@"Images/Circle.png");
+                        bottomLeftWon = true;
+                    }
+                }
+            }
+            if (bottomLeftBoard[0, 0] == currentPlayer && bottomLeftBoard[1, 1] == currentPlayer && bottomLeftBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button56.SendToBack();
+                button57.SendToBack();
+                button58.SendToBack();
+                button59.SendToBack();
+                button60.SendToBack();
+                button61.SendToBack();
+                button62.SendToBack();
+                button63.SendToBack();
+                button64.SendToBack();
+
+                pb_BottomLeft.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_BottomLeft.Image = Image.FromFile(@"Images/X.png");
+                    bottomLeftWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_BottomLeft.Image = Image.FromFile(@"Images/Circle.png");
+                    bottomLeftWon = true;
+                }
+            }
+            if (bottomLeftBoard[0, 2] == currentPlayer && bottomLeftBoard[1, 1] == currentPlayer && bottomLeftBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button56.SendToBack();
+                button57.SendToBack();
+                button58.SendToBack();
+                button59.SendToBack();
+                button60.SendToBack();
+                button61.SendToBack();
+                button62.SendToBack();
+                button63.SendToBack();
+                button64.SendToBack();
+
+                pb_BottomLeft.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_BottomLeft.Image = Image.FromFile(@"Images/X.png");
+                    bottomLeftWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_BottomLeft.Image = Image.FromFile(@"Images/Circle.png");
+                    bottomLeftWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinBottomMiddle()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (bottomMiddleBoard[i, 0] == currentPlayer && bottomMiddleBoard[i, 1] == currentPlayer && bottomMiddleBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button65.SendToBack();
+                    button66.SendToBack();
+                    button67.SendToBack();
+                    button68.SendToBack();
+                    button69.SendToBack();
+                    button70.SendToBack();
+                    button71.SendToBack();
+                    button72.SendToBack();
+                    button73.SendToBack();
+
+                    pb_BottomMiddle.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_BottomMiddle.Image = Image.FromFile(@"Images/X.png");
+                        bottomMiddleWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_BottomMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                        bottomMiddleWon = true;
+                    }
+                }
+                if (bottomMiddleBoard[0, i] == currentPlayer && bottomMiddleBoard[1, i] == currentPlayer && bottomMiddleBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button65.SendToBack();
+                    button66.SendToBack();
+                    button67.SendToBack();
+                    button68.SendToBack();
+                    button69.SendToBack();
+                    button70.SendToBack();
+                    button71.SendToBack();
+                    button72.SendToBack();
+                    button73.SendToBack();
+
+                    pb_BottomMiddle.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_BottomMiddle.Image = Image.FromFile(@"Images/X.png");
+                        bottomMiddleWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_BottomMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                        bottomMiddleWon = true;
+                    }
+                }
+            }
+            if (bottomMiddleBoard[0, 0] == currentPlayer && bottomMiddleBoard[1, 1] == currentPlayer && bottomMiddleBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button65.SendToBack();
+                button66.SendToBack();
+                button67.SendToBack();
+                button68.SendToBack();
+                button69.SendToBack();
+                button70.SendToBack();
+                button71.SendToBack();
+                button72.SendToBack();
+                button73.SendToBack();
+
+                pb_BottomMiddle.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_BottomMiddle.Image = Image.FromFile(@"Images/X.png");
+                    bottomMiddleWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_BottomMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                    bottomMiddleWon = true;
+                }
+            }
+            if (bottomMiddleBoard[0, 2] == currentPlayer && bottomMiddleBoard[1, 1] == currentPlayer && bottomMiddleBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button65.SendToBack();
+                button66.SendToBack();
+                button67.SendToBack();
+                button68.SendToBack();
+                button69.SendToBack();
+                button70.SendToBack();
+                button71.SendToBack();
+                button72.SendToBack();
+                button73.SendToBack();
+
+                pb_BottomMiddle.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_BottomMiddle.Image = Image.FromFile(@"Images/X.png");
+                    bottomMiddleWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_BottomMiddle.Image = Image.FromFile(@"Images/Circle.png");
+                    bottomMiddleWon = true;
+                }
+            }
+        }
+
+        public void CheckMinorWinBottomRight()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (bottomRightBoard[i, 0] == currentPlayer && bottomRightBoard[i, 1] == currentPlayer && bottomRightBoard[i, 2] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button74.SendToBack();
+                    button75.SendToBack();
+                    button76.SendToBack();
+                    button77.SendToBack();
+                    button78.SendToBack();
+                    button79.SendToBack();
+                    button80.SendToBack();
+                    button81.SendToBack();
+                    button82.SendToBack();
+
+                    pb_BottomRight.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_BottomRight.Image = Image.FromFile(@"Images/X.png");
+                        bottomRightWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_BottomRight.Image = Image.FromFile(@"Images/Circle.png");
+                        bottomRightWon = true;
+                    }
+                }
+                if (bottomRightBoard[0, i] == currentPlayer && bottomRightBoard[1, i] == currentPlayer && bottomRightBoard[2, i] == currentPlayer)
+                {
+                    minorWins[0, 0] = currentPlayer;
+
+                    button74.SendToBack();
+                    button75.SendToBack();
+                    button76.SendToBack();
+                    button77.SendToBack();
+                    button78.SendToBack();
+                    button79.SendToBack();
+                    button80.SendToBack();
+                    button81.SendToBack();
+                    button82.SendToBack();
+
+                    pb_BottomRight.BringToFront();
+
+                    if (currentPlayer == 1)
+                    {
+                        pb_BottomRight.Image = Image.FromFile(@"Images/X.png");
+                        bottomRightWon = true;
+                    }
+                    else if (currentPlayer == 2)
+                    {
+                        pb_BottomRight.Image = Image.FromFile(@"Images/Circle.png");
+                        bottomRightWon = true;
+                    }
+                }
+            }
+            if (bottomRightBoard[0, 0] == currentPlayer && bottomRightBoard[1, 1] == currentPlayer && bottomRightBoard[2, 2] == currentPlayer) // checking diagonals
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button74.SendToBack();
+                button75.SendToBack();
+                button76.SendToBack();
+                button77.SendToBack();
+                button78.SendToBack();
+                button79.SendToBack();
+                button80.SendToBack();
+                button81.SendToBack();
+                button82.SendToBack();
+
+                pb_BottomRight.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_BottomRight.Image = Image.FromFile(@"Images/X.png");
+                    bottomRightWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_BottomRight.Image = Image.FromFile(@"Images/Circle.png");
+                    bottomRightWon = true;
+                }
+            }
+            if (bottomRightBoard[0, 2] == currentPlayer && bottomRightBoard[1, 1] == currentPlayer && bottomRightBoard[2, 0] == currentPlayer)
+            {
+                minorWins[0, 0] = currentPlayer;
+
+                button74.SendToBack();
+                button75.SendToBack();
+                button76.SendToBack();
+                button77.SendToBack();
+                button78.SendToBack();
+                button79.SendToBack();
+                button80.SendToBack();
+                button81.SendToBack();
+                button82.SendToBack();
+
+                pb_BottomRight.BringToFront();
+
+                if (currentPlayer == 1)
+                {
+                    pb_BottomRight.Image = Image.FromFile(@"Images/X.png");
+                    bottomRightWon = true;
+                }
+                else if (currentPlayer == 2)
+                {
+                    pb_BottomRight.Image = Image.FromFile(@"Images/Circle.png");
+                    bottomRightWon = true;
+                }
+            }
+        }
+
+        public bool CheckMajorWin()
+        {
+            //checking horizontals
+            if ((AreMajorBoardSquaresEqual(pb_TopLeft.Image, pb_TopMiddle.Image, pb_TopRight.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_TopLeft.Image, pb_TopMiddle.Image, pb_TopRight.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            if ((AreMajorBoardSquaresEqual(pb_MiddleLeft.Image, pb_Center.Image, pb_MiddleRight.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_MiddleLeft.Image, pb_Center.Image, pb_MiddleRight.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            if ((AreMajorBoardSquaresEqual(pb_BottomLeft.Image, pb_BottomMiddle.Image, pb_BottomRight.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_BottomLeft.Image, pb_BottomMiddle.Image, pb_BottomRight.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            //checking verticals
+
+            if ((AreMajorBoardSquaresEqual(pb_TopLeft.Image, pb_MiddleLeft.Image, pb_BottomLeft.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_TopLeft.Image, pb_MiddleLeft.Image, pb_BottomLeft.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            if ((AreMajorBoardSquaresEqual(pb_TopMiddle.Image, pb_Center.Image, pb_BottomMiddle.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_TopMiddle.Image, pb_Center.Image, pb_BottomMiddle.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            if ((AreMajorBoardSquaresEqual(pb_TopRight.Image, pb_MiddleRight.Image, pb_BottomRight.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_TopRight.Image, pb_MiddleRight.Image, pb_BottomRight.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            //checking diagonals
+
+            if ((AreMajorBoardSquaresEqual(pb_TopLeft.Image, pb_Center.Image, pb_BottomRight.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_TopLeft.Image, pb_Center.Image, pb_BottomRight.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            if ((AreMajorBoardSquaresEqual(pb_TopRight.Image, pb_Center.Image, pb_BottomLeft.Image)) && currentPlayer == 1)
+            {
+                MessageBox.Show("Player 1 wins!");
+                return true;
+            }
+            else if ((AreMajorBoardSquaresEqual(pb_TopRight.Image, pb_Center.Image, pb_BottomLeft.Image)) && currentPlayer == 2)
+            {
+                MessageBox.Show("Player 2 wins!");
+                return true;
+            }
+
+            return false;
+
+        }
+        #endregion
+
+        public void CheckDraw()
+        {
+            if (topLeftWon && topMiddleWon && topRightWon && middleLeftWon && centerWon && middleRightWon && bottomLeftWon && bottomMiddleWon && bottomRightWon && (CheckMajorWin() == false))
+            {
+                MessageBox.Show("It's a draw!");
+            }
+        }
+
+        public void FocusCurrentBoard()
+        {
+            //top left board
+            if (currentMinorBoard == 1)
+            {
+                Button[] buttonsToEnable = { button2, button3, button4, button5, button6, button7, button8, button9, button10 };
+                Button[] buttonsToDisable = { button11, button12, button13, button14, button15, button16, button17, button18, button19, button20, button21, button22, button23, button24, button25, button26, button27, button28, button29, button30, button31, button32, button33, button34, button35, button36, button37, button38, button39, button40, button41, button42, button43, button44, button45, button46, button47, button48, button49, button50, button51, button52, button53, button54, button55, button56, button57, button58, button59, button60, button61, button62, button63, button64, button65, button66, button67, button68, button69, button70, button71, button72, button73, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (topLeftWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //top middle board
+            if (currentMinorBoard == 2)
+            {
+                Button[] buttonsToEnable = { button11, button12, button13, button14, button15, button16, button17, button18, button19 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button20, button21, button22, button23, button24, button25, button26, button27, button28, button29, button30, button31, button32, button33, button34, button35, button36, button37, button38, button39, button40, button41, button42, button43, button44, button45, button46, button47, button48, button49, button50, button51, button52, button53, button54, button55, button56, button57, button58, button59, button60, button61, button62, button63, button64, button65, button66, button67, button68, button69, button70, button71, button72, button73, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (topMiddleWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //top right board
+            if (currentMinorBoard == 3)
+            {
+                Button[] buttonsToEnable = { button20, button21, button22, button23, button24, button25, button26, button27, button28 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16, button17, button18, button19, button29, button30, button31, button32, button33, button34, button35, button36, button37, button38, button39, button40, button41, button42, button43, button44, button45, button46, button47, button48, button49, button50, button51, button52, button53, button54, button55, button56, button57, button58, button59, button60, button61, button62, button63, button64, button65, button66, button67, button68, button69, button70, button71, button72, button73, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (topRightWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //middle left board
+            if (currentMinorBoard == 4)
+            {
+                Button[] buttonsToEnable = { button29, button30, button31, button32, button33, button34, button35, button36, button37 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16, button17, button18, button19, button20, button21, button22, button23, button24, button25, button26, button27, button28, button38, button39, button40, button41, button42, button43, button44, button45, button46, button47, button48, button49, button50, button51, button52, button53, button54, button55, button56, button57, button58, button59, button60, button61, button62, button63, button64, button65, button66, button67, button68, button69, button70, button71, button72, button73, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (middleLeftWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //center board
+            if (currentMinorBoard == 5)
+            {
+                Button[] buttonsToEnable = { button38, button39, button40, button41, button42, button43, button44, button45, button46 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16, button17, button18, button19, button20, button21, button22, button23, button24, button25, button26, button27, button28, button29, button30, button31, button32, button33, button34, button35, button36, button37, button47, button48, button49, button50, button51, button52, button53, button54, button55, button56, button57, button58, button59, button60, button61, button62, button63, button64, button65, button66, button67, button68, button69, button70, button71, button72, button73, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (centerWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //middle right board
+            if (currentMinorBoard == 6)
+            {
+                Button[] buttonsToEnable = { button47, button48, button49, button50, button51, button52, button53, button54, button55 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16, button17, button18, button19, button20, button21, button22, button23, button24, button25, button26, button27, button28, button29, button30, button31, button32, button33, button34, button35, button36, button37, button38, button39, button40, button41, button42, button43, button44, button45, button46, button56, button57, button58, button59, button60, button61, button62, button63, button64, button65, button66, button67, button68, button69, button70, button71, button72, button73, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (middleRightWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //bottom left board
+            if (currentMinorBoard == 7)
+            {
+                Button[] buttonsToEnable = { button56, button57, button58, button59, button60, button61, button62, button63, button64 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16, button17, button18, button19, button20, button21, button22, button23, button24, button25, button26, button27, button28, button29, button30, button31, button32, button33, button34, button35, button36, button37, button38, button39, button40, button41, button42, button43, button44, button45, button46, button47, button48, button49, button50, button51, button52, button53, button54, button55, button65, button66, button67, button68, button69, button70, button71, button72, button73, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (bottomLeftWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //bottom middle board
+            if (currentMinorBoard == 8)
+            {
+                Button[] buttonsToEnable = { button65, button66, button67, button68, button69, button70, button71, button72, button73 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16, button17, button18, button19, button20, button21, button22, button23, button24, button25, button26, button27, button28, button29, button30, button31, button32, button33, button34, button35, button36, button37, button38, button39, button40, button41, button42, button43, button44, button45, button46, button47, button48, button49, button50, button51, button52, button53, button54, button55, button56, button57, button58, button59, button60, button61, button62, button63, button64, button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+
+                if (bottomMiddleWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+            //bottom right board
+            if (currentMinorBoard == 9)
+            {
+                Button[] buttonsToEnable = { button74, button75, button76, button77, button78, button79, button80, button81, button82 };
+                Button[] buttonsToDisable = { button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16, button17, button18, button19, button20, button21, button22, button23, button24, button25, button26, button27, button28, button29, button30, button31, button32, button33, button34, button35, button36, button37, button38, button39, button40, button41, button42, button43, button44, button45, button46, button47, button48, button49, button50, button51, button52, button53, button54, button55, button56, button57, button58, button59, button60, button61, button62, button63, button64, button65, button66, button67, button68, button69, button70, button71, button72, button73 };
+
+                if (bottomRightWon == false)
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = true;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+                else
+                {
+                    foreach (Button button in buttonsToEnable)
+                    {
+                        button.Enabled = false;
+                    }
+
+                    foreach (Button button in buttonsToDisable)
+                    {
+                        button.Enabled = true;
+                    }
+                }
+            }
+        }
+
+        #region ButtonClickFunctions
+        private void MinorButtonClickTopLeft(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button2")
+                {
+                    topLeftBoard[0, 0] = 1;
+                }
+                if (buttonName == "button19")
+                {
+                    topMiddleBoard[0, 0] = 1;
+                }
+                if (buttonName == "button28")
+                {
+                    topRightBoard[0, 0] = 1;
+                }
+                if (buttonName == "button37")
+                {
+                    middleLeftBoard[0, 0] = 1;
+                }
+                if (buttonName == "button46")
+                {
+                    centerBoard[0, 0] = 1;
+                }
+                if (buttonName == "button55")
+                {
+                    middleRightBoard[0, 0] = 1;
+                }
+                if (buttonName == "button64")
+                {
+                    bottomLeftBoard[0, 0] = 1;
+                }
+                if (buttonName == "button73")
+                {
+                    bottomMiddleBoard[0, 0] = 1;
+                }
+                if (buttonName == "button82")
+                {
+                    bottomRightBoard[0, 0] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 1;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button2")
+                {
+                    topLeftBoard[0, 0] = 2;
+                }
+                if (buttonName == "button19")
+                {
+                    topMiddleBoard[0, 0] = 2;
+                }
+                if (buttonName == "button28")
+                {
+                    topRightBoard[0, 0] = 2;
+                }
+                if (buttonName == "button37")
+                {
+                    middleLeftBoard[0, 0] = 2;
+                }
+                if (buttonName == "button46")
+                {
+                    centerBoard[0, 0] = 2;
+                }
+                if (buttonName == "button55")
+                {
+                    middleRightBoard[0, 0] = 2;
+                }
+                if (buttonName == "button64")
+                {
+                    bottomLeftBoard[0, 0] = 2;
+                }
+                if (buttonName == "button73")
+                {
+                    bottomMiddleBoard[0, 0] = 2;
+                }
+                if (buttonName == "button82")
+                {
+                    bottomRightBoard[0, 0] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 1;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickTopMiddle(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button3")
+                {
+                    topLeftBoard[0, 1] = 1;
+                }
+                if (buttonName == "button18")
+                {
+                    topMiddleBoard[0, 1] = 1;
+                }
+                if (buttonName == "button27")
+                {
+                    topRightBoard[0, 1] = 1;
+                }
+                if (buttonName == "button36")
+                {
+                    middleLeftBoard[0, 1] = 1;
+                }
+                if (buttonName == "button45")
+                {
+                    centerBoard[0, 1] = 1;
+                }
+                if (buttonName == "button54")
+                {
+                    middleRightBoard[0, 1] = 1;
+                }
+                if (buttonName == "button63")
+                {
+                    bottomLeftBoard[0, 1] = 1;
+                }
+                if (buttonName == "button72")
+                {
+                    bottomMiddleBoard[0, 1] = 1;
+                }
+                if (buttonName == "button81")
+                {
+                    bottomRightBoard[0, 1] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 2;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button3")
+                {
+                    topLeftBoard[0, 1] = 2;
+                }
+                if (buttonName == "button18")
+                {
+                    topMiddleBoard[0, 1] = 2;
+                }
+                if (buttonName == "button27")
+                {
+                    topRightBoard[0, 1] = 2;
+                }
+                if (buttonName == "button36")
+                {
+                    middleLeftBoard[0, 1] = 2;
+                }
+                if (buttonName == "button45")
+                {
+                    centerBoard[0, 1] = 2;
+                }
+                if (buttonName == "button54")
+                {
+                    middleRightBoard[0, 1] = 2;
+                }
+                if (buttonName == "button63")
+                {
+                    bottomLeftBoard[0, 1] = 2;
+                }
+                if (buttonName == "button72")
+                {
+                    bottomMiddleBoard[0, 1] = 2;
+                }
+                if (buttonName == "button81")
+                {
+                    bottomRightBoard[0, 1] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 2;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickTopRight(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button4")
+                {
+                    topLeftBoard[0, 2] = 1;
+                }
+                if (buttonName == "button17")
+                {
+                    topMiddleBoard[0, 2] = 1;
+                }
+                if (buttonName == "button26")
+                {
+                    topRightBoard[0, 2] = 1;
+                }
+                if (buttonName == "button35")
+                {
+                    middleLeftBoard[0, 2] = 1;
+                }
+                if (buttonName == "button44")
+                {
+                    centerBoard[0, 2] = 1;
+                }
+                if (buttonName == "button53")
+                {
+                    middleRightBoard[0, 2] = 1;
+                }
+                if (buttonName == "button62")
+                {
+                    bottomLeftBoard[0, 2] = 1;
+                }
+                if (buttonName == "button71")
+                {
+                    bottomMiddleBoard[0, 2] = 1;
+                }
+                if (buttonName == "button80")
+                {
+                    bottomRightBoard[0, 2] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 3;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button4")
+                {
+                    topLeftBoard[0, 2] = 2;
+                }
+                if (buttonName == "button17")
+                {
+                    topMiddleBoard[0, 2] = 2;
+                }
+                if (buttonName == "button26")
+                {
+                    topRightBoard[0, 2] = 2;
+                }
+                if (buttonName == "button35")
+                {
+                    middleLeftBoard[0, 2] = 2;
+                }
+                if (buttonName == "button44")
+                {
+                    centerBoard[0, 2] = 2;
+                }
+                if (buttonName == "button53")
+                {
+                    middleRightBoard[0, 2] = 2;
+                }
+                if (buttonName == "button62")
+                {
+                    bottomLeftBoard[0, 2] = 2;
+                }
+                if (buttonName == "button71")
+                {
+                    bottomMiddleBoard[0, 2] = 2;
+                }
+                if (buttonName == "button80")
+                {
+                    bottomRightBoard[0, 2] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 3;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickMiddleLeft(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button7")
+                {
+                    topLeftBoard[1, 0] = 1;
+                }
+                if (buttonName == "button16")
+                {
+                    topMiddleBoard[1, 0] = 1;
+                }
+                if (buttonName == "button25")
+                {
+                    topRightBoard[1, 0] = 1;
+                }
+                if (buttonName == "button34")
+                {
+                    middleLeftBoard[1, 0] = 1;
+                }
+                if (buttonName == "button43")
+                {
+                    centerBoard[1, 0] = 1;
+                }
+                if (buttonName == "button52")
+                {
+                    middleRightBoard[1, 0] = 1;
+                }
+                if (buttonName == "button61")
+                {
+                    bottomLeftBoard[1, 0] = 1;
+                }
+                if (buttonName == "button70")
+                {
+                    bottomMiddleBoard[1, 0] = 1;
+                }
+                if (buttonName == "button79")
+                {
+                    bottomRightBoard[1, 0] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 4;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button7")
+                {
+                    topLeftBoard[1, 0] = 2;
+                }
+                if (buttonName == "button16")
+                {
+                    topMiddleBoard[1, 0] = 2;
+                }
+                if (buttonName == "button25")
+                {
+                    topRightBoard[1, 0] = 2;
+                }
+                if (buttonName == "button34")
+                {
+                    middleLeftBoard[1, 0] = 2;
+                }
+                if (buttonName == "button43")
+                {
+                    centerBoard[1, 0] = 2;
+                }
+                if (buttonName == "button52")
+                {
+                    middleRightBoard[1, 0] = 2;
+                }
+                if (buttonName == "button61")
+                {
+                    bottomLeftBoard[1, 0] = 2;
+                }
+                if (buttonName == "button70")
+                {
+                    bottomMiddleBoard[1, 0] = 2;
+                }
+                if (buttonName == "button79")
+                {
+                    bottomRightBoard[1, 0] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 4;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickCenter(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button6")
+                {
+                    topLeftBoard[1, 1] = 1;
+                }
+                if (buttonName == "button15")
+                {
+                    topMiddleBoard[1, 1] = 1;
+                }
+                if (buttonName == "button24")
+                {
+                    topRightBoard[1, 1] = 1;
+                }
+                if (buttonName == "button33")
+                {
+                    middleLeftBoard[1, 1] = 1;
+                }
+                if (buttonName == "button42")
+                {
+                    centerBoard[1, 1] = 1;
+                }
+                if (buttonName == "button51")
+                {
+                    middleRightBoard[1, 1] = 1;
+                }
+                if (buttonName == "button60")
+                {
+                    bottomLeftBoard[1, 1] = 1;
+                }
+                if (buttonName == "button69")
+                {
+                    bottomMiddleBoard[1, 1] = 1;
+                }
+                if (buttonName == "button78")
+                {
+                    bottomRightBoard[1, 1] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 5;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button6")
+                {
+                    topLeftBoard[1, 1] = 2;
+                }
+                if (buttonName == "button15")
+                {
+                    topMiddleBoard[1, 1] = 2;
+                }
+                if (buttonName == "button24")
+                {
+                    topRightBoard[1, 1] = 2;
+                }
+                if (buttonName == "button33")
+                {
+                    middleLeftBoard[1, 1] = 2;
+                }
+                if (buttonName == "button42")
+                {
+                    centerBoard[1, 1] = 2;
+                }
+                if (buttonName == "button51")
+                {
+                    middleRightBoard[1, 1] = 2;
+                }
+                if (buttonName == "button60")
+                {
+                    bottomLeftBoard[1, 1] = 2;
+                }
+                if (buttonName == "button69")
+                {
+                    bottomMiddleBoard[1, 1] = 2;
+                }
+                if (buttonName == "button78")
+                {
+                    bottomRightBoard[1, 1] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 5;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickMiddleRight(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button5")
+                {
+                    topLeftBoard[1, 2] = 1;
+                }
+                if (buttonName == "button14")
+                {
+                    topMiddleBoard[1, 2] = 1;
+                }
+                if (buttonName == "button23")
+                {
+                    topRightBoard[1, 2] = 1;
+                }
+                if (buttonName == "button32")
+                {
+                    middleLeftBoard[1, 2] = 1;
+                }
+                if (buttonName == "button41")
+                {
+                    centerBoard[1, 2] = 1;
+                }
+                if (buttonName == "button50")
+                {
+                    middleRightBoard[1, 2] = 1;
+                }
+                if (buttonName == "button59")
+                {
+                    bottomLeftBoard[1, 2] = 1;
+                }
+                if (buttonName == "button68")
+                {
+                    bottomMiddleBoard[1, 2] = 1;
+                }
+                if (buttonName == "button77")
+                {
+                    bottomRightBoard[1, 2] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 6;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button5")
+                {
+                    topLeftBoard[1, 2] = 2;
+                }
+                if (buttonName == "button14")
+                {
+                    topMiddleBoard[1, 2] = 2;
+                }
+                if (buttonName == "button23")
+                {
+                    topRightBoard[1, 2] = 2;
+                }
+                if (buttonName == "button32")
+                {
+                    middleLeftBoard[1, 2] = 2;
+                }
+                if (buttonName == "button41")
+                {
+                    centerBoard[1, 2] = 2;
+                }
+                if (buttonName == "button50")
+                {
+                    middleRightBoard[1, 2] = 2;
+                }
+                if (buttonName == "button59")
+                {
+                    bottomLeftBoard[1, 2] = 2;
+                }
+                if (buttonName == "button68")
+                {
+                    bottomMiddleBoard[1, 2] = 2;
+                }
+                if (buttonName == "button77")
+                {
+                    bottomRightBoard[1, 2] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 6;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickBottomLeft(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button10")
+                {
+                    topLeftBoard[2, 0] = 1;
+                }
+                if (buttonName == "button13")
+                {
+                    topMiddleBoard[2, 0] = 1;
+                }
+                if (buttonName == "button22")
+                {
+                    topRightBoard[2, 0] = 1;
+                }
+                if (buttonName == "button31")
+                {
+                    middleLeftBoard[2, 0] = 1;
+                }
+                if (buttonName == "button40")
+                {
+                    centerBoard[2, 0] = 1;
+                }
+                if (buttonName == "button49")
+                {
+                    middleRightBoard[2, 0] = 1;
+                }
+                if (buttonName == "button58")
+                {
+                    bottomLeftBoard[2, 0] = 1;
+                }
+                if (buttonName == "button67")
+                {
+                    bottomMiddleBoard[2, 0] = 1;
+                }
+                if (buttonName == "button76")
+                {
+                    bottomRightBoard[2, 0] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 7;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button10")
+                {
+                    topLeftBoard[2, 0] = 2;
+                }
+                if (buttonName == "button13")
+                {
+                    topMiddleBoard[2, 0] = 2;
+                }
+                if (buttonName == "button22")
+                {
+                    topRightBoard[2, 0] = 2;
+                }
+                if (buttonName == "button31")
+                {
+                    middleLeftBoard[2, 0] = 2;
+                }
+                if (buttonName == "button40")
+                {
+                    centerBoard[2, 0] = 2;
+                }
+                if (buttonName == "button49")
+                {
+                    middleRightBoard[2, 0] = 2;
+                }
+                if (buttonName == "button58")
+                {
+                    bottomLeftBoard[2, 0] = 2;
+                }
+                if (buttonName == "button67")
+                {
+                    bottomMiddleBoard[2, 0] = 2;
+                }
+                if (buttonName == "button76")
+                {
+                    bottomRightBoard[2, 0] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 7;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickBottomMiddle(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button9")
+                {
+                    topLeftBoard[2, 1] = 1;
+                }
+                if (buttonName == "button12")
+                {
+                    topMiddleBoard[2, 1] = 1;
+                }
+                if (buttonName == "button21")
+                {
+                    topRightBoard[2, 1] = 1;
+                }
+                if (buttonName == "button30")
+                {
+                    middleLeftBoard[2, 1] = 1;
+                }
+                if (buttonName == "button39")
+                {
+                    centerBoard[2, 1] = 1;
+                }
+                if (buttonName == "button48")
+                {
+                    middleRightBoard[2, 1] = 1;
+                }
+                if (buttonName == "button57")
+                {
+                    bottomLeftBoard[2, 1] = 1;
+                }
+                if (buttonName == "button66")
+                {
+                    bottomMiddleBoard[2, 1] = 1;
+                }
+                if (buttonName == "button75")
+                {
+                    bottomRightBoard[2, 1] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 8;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button9")
+                {
+                    topLeftBoard[2, 1] = 2;
+                }
+                if (buttonName == "button12")
+                {
+                    topMiddleBoard[2, 1] = 2;
+                }
+                if (buttonName == "button21")
+                {
+                    topRightBoard[2, 1] = 2;
+                }
+                if (buttonName == "button30")
+                {
+                    middleLeftBoard[2, 1] = 2;
+                }
+                if (buttonName == "button39")
+                {
+                    centerBoard[2, 1] = 2;
+                }
+                if (buttonName == "button48")
+                {
+                    middleRightBoard[2, 1] = 2;
+                }
+                if (buttonName == "button57")
+                {
+                    bottomLeftBoard[2, 1] = 2;
+                }
+                if (buttonName == "button66")
+                {
+                    bottomMiddleBoard[2, 1] = 2;
+                }
+                if (buttonName == "button75")
+                {
+                    bottomRightBoard[2, 1] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 8;
+                FocusCurrentBoard();
+            }
+        }
+
+        private void MinorButtonClickBottomRight(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string buttonName = clickedButton.Name;
+
+            if (currentPlayer == 1)
+            {
+                if (buttonName == "button8")
+                {
+                    topLeftBoard[2, 2] = 1;
+                }
+                if (buttonName == "button11")
+                {
+                    topMiddleBoard[2, 2] = 1;
+                }
+                if (buttonName == "button20")
+                {
+                    topRightBoard[2, 2] = 1;
+                }
+                if (buttonName == "button29")
+                {
+                    middleLeftBoard[2, 2] = 1;
+                }
+                if (buttonName == "button38")
+                {
+                    centerBoard[2, 2] = 1;
+                }
+                if (buttonName == "button47")
+                {
+                    middleRightBoard[2, 2] = 1;
+                }
+                if (buttonName == "button56")
+                {
+                    bottomLeftBoard[2, 2] = 1;
+                }
+                if (buttonName == "button65")
+                {
+                    bottomMiddleBoard[2, 2] = 1;
+                }
+                if (buttonName == "button74")
+                {
+                    bottomRightBoard[2, 2] = 1;
+                }
+
+                clickedButton.Text = "X";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 2;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 2 (0)'s turn.");
+                currentMinorBoard = 9;
+                FocusCurrentBoard();
+            }
+            else if (currentPlayer == 2)
+            {
+                if (buttonName == "button8")
+                {
+                    topLeftBoard[2, 2] = 2;
+                }
+                if (buttonName == "button11")
+                {
+                    topMiddleBoard[2, 2] = 2;
+                }
+                if (buttonName == "button20")
+                {
+                    topRightBoard[2, 2] = 2;
+                }
+                if (buttonName == "button29")
+                {
+                    middleLeftBoard[2, 2] = 2;
+                }
+                if (buttonName == "button38")
+                {
+                    centerBoard[2, 2] = 2;
+                }
+                if (buttonName == "button47")
+                {
+                    middleRightBoard[2, 2] = 2;
+                }
+                if (buttonName == "button56")
+                {
+                    bottomLeftBoard[2, 2] = 2;
+                }
+                if (buttonName == "button65")
+                {
+                    bottomMiddleBoard[2, 2] = 2;
+                }
+                if (buttonName == "button74")
+                {
+                    bottomRightBoard[2, 2] = 2;
+                }
+
+                clickedButton.Text = "O";
+
+                CheckMinorWinTopLeft();
+                CheckMinorWinTopMiddle();
+                CheckMinorWinTopRight();
+                CheckMinorWinMiddleLeft();
+                CheckMinorWinCenter();
+                CheckMinorWinMiddleRight();
+                CheckMinorWinBottomLeft();
+                CheckMinorWinBottomMiddle();
+                CheckMinorWinBottomRight();
+
+                CheckDraw();
+                CheckMajorWin();
+
+                currentPlayer = 1;
+                GameLog.Items.Clear();
+                GameLog.Items.Add("Player 1 (X)'s turn.");
+                currentMinorBoard = 9;
+                FocusCurrentBoard();
+            }
+        }
+        #endregion
+    }
+}
